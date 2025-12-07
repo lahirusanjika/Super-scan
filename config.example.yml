@@ -1,0 +1,154 @@
+ignore_dirs:
+  - .git
+  - node_modules
+  - dist
+  - build
+  - .venv
+  - venv
+  - __pycache__
+
+max_file_size_bytes: 5242880 # 5 MB
+
+sensitive_filenames:
+  - .env
+  - env
+  - secrets
+  - secret
+  - credentials
+  - config
+  - config.json
+  - config.yml
+  - settings.py
+  - key
+  - id_rsa
+  - id_dsa
+
+patterns:
+  - id: aws_access_key
+    description: AWS Access Key ID
+    regex: "AKIA[0-9A-Z]{16}"
+    severity: high
+    tags: ["aws", "access_key", "cloud"]
+
+  - id: aws_secret_key
+    description: AWS Secret Access Key
+    regex: "(?i)aws_secret_access_key\s*[:=]\s*['\"][0-9a-zA-Z/+]{40}['\"]"
+    severity: critical
+    tags: ["aws", "secret", "cloud"]
+
+  - id: github_pat
+    description: GitHub Personal Access Token
+    regex: "ghp_[0-9A-Za-z]{36}"
+    severity: high
+    tags: ["github", "token", "vcs"]
+
+  - id: github_fine_grained_pat
+    description: GitHub Fine-grained Personal Access Token
+    regex: "github_pat_[0-9A-Za-z_]{82}"
+    severity: high
+    tags: ["github", "token", "vcs"]
+
+  - id: stripe_live_key
+    description: Stripe Live Secret Key
+    regex: "sk_live_[0-9a-zA-Z]{24}"
+    severity: critical
+    tags: ["stripe", "payment", "prod"]
+
+  - id: google_api_key
+    description: Google API Key
+    regex: "AIza[0-9A-Za-z\-_]{35}"
+    severity: high
+    tags: ["google", "api", "cloud"]
+
+  - id: slack_token
+    description: Slack token
+    regex: "xox[baprs]-[0-9A-Za-z\-]{10,48}"
+    severity: high
+    tags: ["slack", "token"]
+
+  - id: discord_token
+    description: Discord bot/user token
+    regex: "[MN][A-Za-z0-9]{23}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27}"
+    severity: high
+    tags: ["discord", "token"]
+
+  - id: telegram_bot_token
+    description: Telegram bot token
+    regex: "[0-9]{9,10}:AA[0-9A-Za-z_\-]{33}"
+    severity: high
+    tags: ["telegram", "token"]
+
+  - id: mongodb_uri
+    description: MongoDB connection URI
+    regex: "mongodb(\+srv)?:\/\/[A-Za-z0-9:_\-]+@[A-Za-z0-9\.\-]+\/[A-Za-z0-9_\-]*"
+    severity: high
+    tags: ["mongo", "database", "uri"]
+
+  - id: postgres_uri
+    description: PostgreSQL connection URI
+    regex: "postgres(ql)?:\/\/[A-Za-z0-9:_\-]+@[A-Za-z0-9\.\-]+:[0-9]+\/[A-Za-z0-9_\-]+"
+    severity: high
+    tags: ["postgres", "database", "uri"]
+
+  - id: mysql_uri
+    description: MySQL connection URI
+    regex: "mysql:\/\/[A-Za-z0-9:_\-]+@[A-Za-z0-9\.\-]+:[0-9]+\/[A-Za-z0-9_\-]+"
+    severity: high
+    tags: ["mysql", "database", "uri"]
+
+  - id: jwt_token
+    description: JWT token
+    regex: "[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"
+    severity: medium
+    tags: ["jwt", "token"]
+
+  - id: bearer_token
+    description: Bearer token
+    regex: "Bearer\s+[A-Za-z0-9\-\._~\+\/]+=*"
+    severity: high
+    tags: ["token", "auth"]
+
+  - id: generic_token_name
+    description: Generic token assignment
+    regex: "(token|access_token|auth_token)\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]"
+    severity: high
+    tags: ["token", "generic"]
+
+  - id: generic_api_key
+    description: Generic API key assignment
+    regex: "(api_key|apikey|api-key)\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]"
+    severity: medium
+    tags: ["generic", "api"]
+
+  - id: password_assignment
+    description: Password assigned in code/config
+    regex: "(password|passwd|pwd)\s*[:=]\s*['\"].+['\"]"
+    severity: medium
+    tags: ["password"]
+
+  - id: email_address
+    description: Email address
+    regex: "[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}"
+    severity: low
+    tags: ["email", "pii"]
+
+  - id: private_key_block
+    description: Private key block header
+    regex: "-----BEGIN [A-Z ]*PRIVATE KEY-----"
+    severity: critical
+    tags: ["private_key", "crypto"]
+
+entropy_rules:
+  - id: high_entropy_default
+    description: High entropy string (possible secret)
+    min_length: 20
+    entropy_threshold: 3.5
+    severity: medium
+    tags: ["entropy", "generic"]
+
+  - id: high_entropy_strict
+    description: Long high entropy string (likely secret)
+    min_length: 32
+    entropy_threshold: 4.0
+    severity: high
+    tags: ["entropy", "strong"]
